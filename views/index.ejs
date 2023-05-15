@@ -28,10 +28,15 @@
                             <p>Title: <%= todoArray[i].title %></p>
                             <p>Text: <%= todoArray[i].text %></p>
                             
-                            <form action="/delete" method="post">
-                                <input type="hidden" name="index" value="<%= i %>">
-                                <button class="btn btn-dark">Delete</button>
-                            </form>
+                            <div class="d-flex">
+                                <form action="/delete" method="post">
+                                    <input type="hidden" name="index" value="<%= i %>">
+                                    <button class="btn btn-dark">Delete</button>
+                                </form>
+                                <form action="/edit/<%= i %>" method="get">
+                                    <button class="btn btn-dark mx-3">Edit</button>
+                                </form>
+                            </div>
                         </div>
                         <% } %>
                 </div>

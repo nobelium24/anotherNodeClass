@@ -19,6 +19,7 @@ app.get("/", (request, response)=>{
 })
 
 const todoArray = []
+let id
 
 app.get("/html", (req, res)=>{
     console.log(__dirname)
@@ -40,6 +41,26 @@ app.post("/delete", (req, res)=>{
     let index = req.body.index
     console.log(index)
     todoArray.splice(index, 1)
+    res.redirect("/todo")
+})
+
+app.get("/edit/:id", (req, res)=>{
+    // console.log(req.params.id)
+    id = req.params.id
+    let title
+    let text
+    for (let i = 0; i < todoArray.length; i++) {
+        const element = todoArray[i];
+        title = todoArray[id].title;
+        text = todoArray[id].text
+    }
+    res.render("edit", {todoArray:todoArray, title, text})
+})
+
+app.post("/edittodo", (req, res)=>{
+    console.log(req.body, id)
+    let obj = req.body
+    todoArray.splice(id, 1, obj)
     res.redirect("/todo")
 })
 
