@@ -20,8 +20,20 @@ app.get("/", (request, response) => {
     ])
 })
 
+const userSchema = new mongoose.Schema({
+    userName: { type: String, required: true, trim: true },
+    wallet: { type: Number, required: true, default: 1000 },
+    isAdmin: { type: Boolean, default: false },
+    reviews: {
+        type: [{
+            email: { type: String, required: true },
+            review: { type: String, required: true }
+        }], required: true
+    }
+})
+
 const todoSchema = new mongoose.Schema({
-    title: String,
+    title: { type: String, required: true },
     text: String
 })
 const todoModel = mongoose.models.todo_tbs || mongoose.model("todo_tbs", todoSchema)
@@ -37,13 +49,13 @@ app.get("/html", (req, res) => {
 app.get("/todo", async (req, res) => {
     try {
         const result = await todoModel.find({})
-        if(!result){
+        if (!result) {
             return res.status(500).send({ message: "Error fetching from database", status: false })
         }
         console.log(result)
         res.render("index", { todoArray: result });
     } catch (error) {
-        return res.status(500).send({message:"Internal server error", status:false})
+        return res.status(500).send({ message: "Internal server error", status: false })
     }
 })
 
@@ -65,36 +77,60 @@ app.post("/todo", async (req, res) => {
         res.redirect("/todo")
         // return res.status(201).send({ message: "Todo created successfully", status: true })
     } catch (error) {
-        return res.status(500).send({message:"Internal server error", status:false})
+        return res.status(500).send({ message: "Internal server error", status: false })
     }
 
 })
 
-app.post("/delete", (req, res) => {
-    let index = req.body.index
-    console.log(index)
-    todoArray.splice(index, 1)
-    res.redirect("/todo")
-})
-
-app.get("/edit/:id", (req, res) => {
-    // console.log(req.params.id)
-    id = req.params.id
-    let title
-    let text
-    for (let i = 0; i < todoArray.length; i++) {
-        const element = todoArray[i];
-        title = todoArray[id].title;
-        text = todoArray[id].text
+app.post("/delete", async (req, res) => {
+    try {
+        let index = req.body.index
+        console.log(index)
+        const deleteItem = await todoModel.findByIdAndDelete({ _id: index })
+        console.log(deleteItem)
+        // todoArray.splice(index, 1)
+        res.redirect("/todo")
+    } catch (error) {
+        console.log(error)
     }
-    res.render("edit", { todoArray: todoArray, title, text })
+
 })
 
-app.post("/edittodo", (req, res) => {
-    console.log(req.body, id)
-    let obj = req.body
-    todoArray.splice(id, 1, obj)
-    res.redirect("/todo")
+app.get("/edit/:id", async (req, res) => {
+    try {
+        // console.log(req.params.id)
+        id = req.params.id
+        // for (let i = 0; i < todoArray.length; i++) {
+        //     const element = todoArray[i];
+        //     title = todoArray[id].title;
+        //     text = todoArray[id].text
+        // }
+        // res.render("edit", { todoArray: todoArray, title, text })
+        const todo = await todoModel.findOne({ _id: id })
+        console.log(todo)
+        const { title, text, _id } = todo
+        res.render("edit", { title, text, _id })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+app.post("/edittodo", async (req, res) => {
+    try {
+        console.log(req.body._id)
+        let _id = req.body._id
+        let newTitle = req.body.title
+        let newText = req.body.text
+        // let obj = req.body
+        // todoArray.splice(id, 1, obj)
+        // res.redirect("/todo")
+        const updateTodo = await todoModel.findByIdAndUpdate(
+            { _id }, { $set: { title: newTitle, text: newText } })
+        console.log(updateTodo)
+        res.redirect("/todo")
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 const uri = process.env.MONGODB_URI

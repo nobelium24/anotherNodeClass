@@ -30,10 +30,10 @@
                             
                             <div class="d-flex">
                                 <form action="/delete" method="post">
-                                    <input type="hidden" name="index" value="<%= i %>">
+                                    <input type="hidden" name="index" value="<%= todoArray[i]._id%>">
                                     <button class="btn btn-dark">Delete</button>
                                 </form>
-                                <form action="/edit/<%= i %>" method="get">
+                                <form action="/edit/<%= todoArray[i]._id %>" method="get">
                                     <button class="btn btn-dark mx-3">Edit</button>
                                 </form>
                             </div>
