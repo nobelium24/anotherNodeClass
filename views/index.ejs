@@ -15,7 +15,7 @@
             <div class="col-8 card mx-auto py-4 px-5">
                 <div class="my-4 d-flex w-100 align-items-center justify-content-center flex-column">
                     <h6 class="display-6 text-muted">Todo Application</h6>
-                    <form action="/todo" method="post" class="w-100">
+                    <form action="/todo/createtodo" method="post" class="w-100">
                         <input type="text" placeholder="Title" name="title" class="form-control w-100 my-2">
                         <input type="text" placeholder="Text" name="text" class="form-control w-100 my-2">
                         <button class="btn btn-outline-dark">Submit</button>
@@ -29,11 +29,11 @@
                             <p>Text: <%= todoArray[i].text %></p>
                             
                             <div class="d-flex">
-                                <form action="/delete" method="post">
+                                <form action="/todo/deletetodo" method="post">
                                     <input type="hidden" name="index" value="<%= todoArray[i]._id%>">
                                     <button class="btn btn-dark">Delete</button>
                                 </form>
-                                <form action="/edit/<%= todoArray[i]._id %>" method="get">
+                                <form action="/todo/edit/<%= todoArray[i]._id %>" method="get">
                                     <button class="btn btn-dark mx-3">Edit</button>
                                 </form>
                             </div>
